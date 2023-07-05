@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from utility import model_save_onnx, getPadding
+from utility import model_save_onnx, getPadding, weight_initialize
 
 class ConvBnAct(nn.Module):
     def __init__(
@@ -18,13 +18,10 @@ class ConvBnAct(nn.Module):
         ):
         super().__init__()
         self.padding = getPadding(kernel_size, dilation, padding)
-        self.conv2d = nn.Conv2d(in_channels, out_channels, kernel_size, stride, self.padding, dilation, groups, bias, padding_mode)
-        self.bn2d = nn.BatchNorm2d(out_channels)
-        self.act = activation_layer
         modules = nn.ModuleList([
-            self.conv2d,
-            self.bn2d,
-            self.act
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, self.padding, dilation, groups, bias, padding_mode),
+            nn.BatchNorm2d(out_channels),
+            activation_layer
         ])
         self.net = nn.Sequential(*modules)
 
@@ -44,6 +41,7 @@ if __name__ == "__main__":
         padding_mode='zeros', 
         activation_layer=nn.LeakyReLU(inplace=True)
     )
+    model.apply(weight_initialize)
     model.eval()
     input_shape = (4, 3, 28, 28)
     model_save_onnx(model, input_shape, "conv_layer", True)
