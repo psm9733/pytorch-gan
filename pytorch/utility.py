@@ -5,7 +5,7 @@ from torchinfo import summary
 TrainingMode = _C._onnx.TrainingMode
 
 def model_save_onnx(model, input_shape, name, verbose=True):
-    dummy_input = torch.randn(input_shape[0], input_shape[1], input_shape[2], input_shape[3]).clone().detach()
+    dummy_input = torch.randn(size=input_shape).clone().detach()
     if torch.cuda.is_available():
         dummy_input = dummy_input.cuda()
 

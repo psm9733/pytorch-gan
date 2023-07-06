@@ -7,7 +7,6 @@ class ResidualBlock(nn.Module):
             self, 
             in_channels,
             width,
-            expansion,
             kernel_size, 
             padding, 
             dilation, 
@@ -16,7 +15,8 @@ class ResidualBlock(nn.Module):
             padding_mode,
             activation_layer,
             apply_bottleneck,
-            downsample
+            downsample,
+            expansion=4
         ):
         super().__init__()
         self.expansion = expansion
@@ -59,7 +59,6 @@ if __name__ == "__main__":
     model = ResidualBlock(
         in_channels=3, 
         width=32,
-        expansion=4,
         kernel_size=3, 
         padding=True, 
         dilation=1, 
@@ -68,7 +67,8 @@ if __name__ == "__main__":
         padding_mode='zeros', 
         activation_layer=nn.LeakyReLU(inplace=True),
         apply_bottleneck=True,
-        downsample=True
+        downsample=True,
+        expansion=4
     )
     model.apply(weight_initialize)
     model.eval()
